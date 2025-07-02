@@ -1,0 +1,2 @@
+-- 예시: 초기 데이터 삽입
+-- INSERT INTO users (username, email) VALUES ('admin', 'admin@example.com'); 
