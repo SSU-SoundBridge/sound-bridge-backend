@@ -31,6 +31,45 @@ src/main/java/com/ssu/soundbridge/
  └── util/                        # 유틸리티 클래스
 ```
 
+## Branch & PR Convention
+- `main` 브랜치에서 `feature/브랜치명` 생성 후 작업
+- PR 제목: 작업에 대한 요약 (디데일할 필요 없음)
+- 커밋 메시지: Conventional Commits 스타일(`feat`, `fix`, `chore` 등)
+
+### 브랜치 네이밍 예시
+- `feature/user-signup`
+- `fix/login-error`
+- `hotfix/db-connection`
+- `chore/gradle-update`
+
+### 커밋 메시지 예시
+```
+feat: implement user signup API
+fix: correct login validation logic
+chore: update gradle dependencies
+```
+
+## Java/Spring Code Convention
+- [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html) + [Spring 공식 컨벤션](https://github.com/spring-projects/spring-framework/wiki/Code-Style) 준수
+- 클래스/인터페이스: `UpperCamelCase`
+- 변수/메서드: `lowerCamelCase`
+- 상수: `UPPER_SNAKE_CASE`
+- 들여쓰기: 4 spaces
+- 중괄호 `{}`는 같은 줄에 시작
+- 파일당 public 클래스는 하나
+- 패키지명은 모두 소문자, 단어 구분은 점(`.`)
+- import 순서: java → javax → 외부 라이브러리 → 프로젝트 내부
+- 어노테이션은 클래스/메서드/필드 바로 위에 붙임
+- Javadoc(/** ... */) 주석 권장
+
+### Spring 추가 권장사항
+- Controller, Service, Repository 등 계층별 역할 명확히 분리
+- @Autowired 대신 생성자 주입(@RequiredArgsConstructor + final)
+- DTO와 Entity 분리
+- 예외는 커스텀 Exception + GlobalExceptionHandler로 처리
+
+---
+
 ## 실행 방법
 ### 1. 데이터베이스 띄우기 (docker compose)
 ```bash
