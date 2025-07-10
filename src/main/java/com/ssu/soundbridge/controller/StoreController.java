@@ -3,6 +3,10 @@ package com.ssu.soundbridge.controller;
 import com.ssu.soundbridge.domain.Store;
 import com.ssu.soundbridge.service.StoreService;
 import com.ssu.soundbridge.dto.StoreDto;
+import com.ssu.soundbridge.dto.StoreRequestDto;
+import com.ssu.soundbridge.domain.Category;
+import com.ssu.soundbridge.domain.Image;
+import com.ssu.soundbridge.service.CategoryService;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,9 +15,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/stores")
 public class StoreController {
     private final StoreService storeService;
+    private final CategoryService categoryService;
 
-    public StoreController(StoreService storeService) {
+    public StoreController(StoreService storeService, CategoryService categoryService) {
         this.storeService = storeService;
+        this.categoryService = categoryService;
     }
 
     @GetMapping
@@ -33,13 +39,68 @@ public class StoreController {
     }
 
     @PostMapping
-    public StoreDto createStore(@RequestBody Store store) {
+    public StoreDto createStore(@RequestBody StoreRequestDto request) {
+        // 필수값 체크
+        if (!request.getName().isPresent() || !request.getLatitude().isPresent() || !request.getLongitude().isPresent() || !request.getCategory().isPresent()) {
+            throw new IllegalArgumentException("name, latitude, longitude, category는 필수입니다.");
+        }
+        Store store = new Store();
+        store.setName(request.getName().orElse(null));
+        store.setDescription(request.getDescription().orElse(null));
+        store.setLatitude(request.getLatitude().orElse(null));
+        store.setLongitude(request.getLongitude().orElse(null));
+        store.setKakaoMapId(request.getKakaoMapId().orElse(null));
+        // 카테고리 이름으로 연결/생성
+        String categoryName = request.getCategory().orElse(null);
+        Category category = categoryService.findAll().stream()
+            .filter(c -> c.getName().equals(categoryName))
+            .findFirst()
+            .orElseGet(() -> categoryService.save(new Category(categoryName)));
+        store.setCategory(category);
+        // 이미지 url 리스트로 연결
+        if (request.getImages().isPresent()) {
+            java.util.List<Image> newImages = request.getImages().get().stream().map(url -> {
+                Image img = new Image();
+                img.setUrl(url);
+                img.setStore(store);
+                return img;
+            }).collect(java.util.stream.Collectors.toList());
+            store.setImages(new java.util.ArrayList<>(newImages));
+        }
         return toDto(storeService.save(store));
     }
 
     @PutMapping("/{id}")
-    public StoreDto updateStore(@PathVariable Long id, @RequestBody Store store) {
-        store.setId(id);
+    public StoreDto updateStore(@PathVariable Long id, @RequestBody StoreRequestDto request) {
+        Store store = storeService.findById(id);
+        if (store == null) return null;
+        if (request.getName() != null) store.setName(request.getName().orElse(null));
+        if (request.getDescription() != null) store.setDescription(request.getDescription().orElse(null));
+        if (request.getLatitude() != null) store.setLatitude(request.getLatitude().orElse(null));
+        if (request.getLongitude() != null) store.setLongitude(request.getLongitude().orElse(null));
+        if (request.getKakaoMapId() != null) store.setKakaoMapId(request.getKakaoMapId().orElse(null));
+        if (request.getCategory() != null) {
+            String categoryName = request.getCategory().orElse(null);
+            Category category = categoryService.findAll().stream()
+                .filter(c -> c.getName().equals(categoryName))
+                .findFirst()
+                .orElseGet(() -> categoryService.save(new Category(categoryName)));
+            store.setCategory(category);
+        }
+        if (request.getImages() != null) {
+            java.util.List<Image> newImages = request.getImages().get().stream().map(url -> {
+                Image img = new Image();
+                img.setUrl(url);
+                img.setStore(store);
+                return img;
+            }).collect(java.util.stream.Collectors.toList());
+            if (store.getImages() == null) {
+                store.setImages(new java.util.ArrayList<>());
+            } else {
+                store.getImages().clear();
+            }
+            store.getImages().addAll(newImages);
+        }
         return toDto(storeService.save(store));
     }
 

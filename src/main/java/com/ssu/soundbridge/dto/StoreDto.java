@@ -1,18 +1,18 @@
 package com.ssu.soundbridge.dto;
 
+import java.util.List;
+
 public class StoreDto {
-    private Long id;
     private String name;
     private String description;
     private Double latitude;
     private Double longitude;
     private String category;
-    private java.util.List<String> images;
+    private List<String> images; // url 리스트
     private String kakaoMapId;
+    private Long id;
 
     public StoreDto() {}
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public String getDescription() { return description; }
@@ -23,8 +23,10 @@ public class StoreDto {
     public void setLongitude(Double longitude) { this.longitude = longitude; }
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
-    public java.util.List<String> getImages() { return images; }
-    public void setImages(java.util.List<String> images) { this.images = images; }
+    public List<String> getImages() { return images; }
+    public void setImages(List<String> images) { this.images = images; }
     public String getKakaoMapId() { return kakaoMapId; }
     public void setKakaoMapId(String kakaoMapId) { this.kakaoMapId = kakaoMapId; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 } 
