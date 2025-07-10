@@ -27,6 +27,11 @@ public class StoreController {
         return toDto(store);
     }
 
+    @GetMapping("/nearby")
+    public List<StoreDto> getStoresByDistance(@RequestParam double latitude, @RequestParam double longitude) {
+        return storeService.findAllOrderByDistance(latitude, longitude).stream().map(this::toDto).toList();
+    }
+
     @PostMapping
     public StoreDto createStore(@RequestBody Store store) {
         return toDto(storeService.save(store));
