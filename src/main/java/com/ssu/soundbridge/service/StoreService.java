@@ -28,4 +28,8 @@ public class StoreService {
     public void delete(Long id) {
         storeRepository.deleteById(id);
     }
+
+    public List<Store> findAllOrderByDistance(double latitude, double longitude) {
+        return storeRepository.findAllOrderByDistance(latitude, longitude);
+    }
 } 
