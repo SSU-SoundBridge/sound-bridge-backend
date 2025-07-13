@@ -1,4 +1,8 @@
 spring:
+  config:
+    import:
+      - application-jwt.yml
+      - application-oauth.yml
   datasource:
     url: jdbc:postgresql://localhost:5432/soundbridge
     username: postgres
@@ -12,8 +16,22 @@ spring:
         format_sql: true
   jackson:
     property-naming-strategy: SNAKE_CASE
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: wlstj0385@gmail.com
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+    auth-code-expiration-millis: 1800000  # 30 * 60 * 1000 == 30?
 server:
   port: 8080
-springdoc:
-  api-docs:
-    path: /v3/api-docs
+
