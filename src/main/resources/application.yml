@@ -34,3 +34,4 @@ spring:
     auth-code-expiration-millis: 1800000  # 30 * 60 * 1000 == 30?
 server:
   port: 8080
+

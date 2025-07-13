@@ -1,48 +1,41 @@
 package com.ssu.soundbridge.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.List;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    /** ❶ Bean Validation 실패( @Valid / @Validated ) */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
-
-        // 모든 필드 오류 메시지를 뽑아 List<String> 으로 변환
-        List<String> errorMessages = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(err -> String.format("[%s] %s",
-                        err.getField(),           // 오류 필드명
-                        err.getDefaultMessage())) // @NotBlank 등에서 적은 message
-                .toList();
-
-        // ❶ 여러 건일 수도 있으니 배열로 응답
-        return ResponseEntity.badRequest()
-                .body(new ErrorResponse("입력값이 올바르지 않습니다.", errorMessages));
+    public ResponseEntity<Map<String, Object>> handleValidationException(MethodArgumentNotValidException ex) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("error", "입력값이 올바르지 않습니다.");
+        error.put("exception", ex.getClass().getSimpleName());
+        error.put("message", ex.getMessage());
+        error.put("stackTrace", getStackTrace(ex));
+        return ResponseEntity.badRequest().body(error);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(ex.getMessage(),null));
+    public ResponseEntity<Map<String, Object>> handleException(Exception ex) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("error", "서버 오류가 발생했습니다.");
+        error.put("exception", ex.getClass().getSimpleName());
+        error.put("message", ex.getMessage());
+        error.put("stackTrace", getStackTrace(ex));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
-    @Data
-    @AllArgsConstructor
-    static class ErrorResponse {
-        private String message;
-        private List<String> details;  // 필드별 상세 메시지 (nullable)
+    private String getStackTrace(Exception ex) {
+        StringWriter sw = new StringWriter();
+        ex.printStackTrace(new PrintWriter(sw));
+        return sw.toString();
     }
-
-
-
-}
+} 
