@@ -1,9 +1,12 @@
 package com.ssu.soundbridge.dto;
 
+import com.ssu.soundbridge.domain.enums.Sex;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 //회원가입
 @NoArgsConstructor
@@ -22,4 +25,12 @@ public class UserSignUpDto {
 
     @NotBlank(message = "닉네임을 입력해주세요.")
     private String nickname;
+
+
+    private Integer age;              // 나이
+
+    private Sex sex; //성별
+
+    private List<String> genres; // 선호 장르 EX 블루스, 제즈, 팝
+
 }

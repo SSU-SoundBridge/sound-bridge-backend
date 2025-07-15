@@ -1,10 +1,13 @@
 package com.ssu.soundbridge.domain;
 
 import com.ssu.soundbridge.domain.enums.Role;
+import com.ssu.soundbridge.domain.enums.Sex;
 import com.ssu.soundbridge.domain.enums.SocialType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -24,7 +27,14 @@ public class User {
     private String imageUrl; // 프로필 이미지
     @Column(nullable = false, unique = true)
     private String nickname; //닉네임
+    private Integer age; //나이
+    @Enumerated(value = EnumType.STRING)
+    private Sex sex; //성별
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> Genres; //성호 장르
     private String refreshToken; // 리프레시 토큰
+
+
     @Enumerated(EnumType.STRING)
     private Role role;
     @Enumerated(EnumType.STRING)

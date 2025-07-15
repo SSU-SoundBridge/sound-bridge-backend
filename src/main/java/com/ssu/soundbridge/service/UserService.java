@@ -29,26 +29,28 @@ public class UserService {
     public void signUp(UserSignUpDto userSignUpDto) throws Exception {
         log.info(userSignUpDto.getEmail());
 
-        // ❶ 먼저 이메일 인증됐는지 확인
-        if (!mailService.isVerified(userSignUpDto.getEmail())) {
-            throw new IllegalStateException("이메일 인증을 완료해 주세요.");
-        }
-
-        if (!userSignUpDto.getPassword().equals(userSignUpDto.getConfirm_password())) {
-            throw new IllegalArgumentException("비밀번호 불일치");
-        }
         if (userRepository.findByEmail(userSignUpDto.getEmail()).isPresent()) {
             throw new Exception("이미 존재하는 이메일입니다.");
         }
-
+        if (!userSignUpDto.getPassword().equals(userSignUpDto.getConfirm_password())) {
+            throw new IllegalArgumentException("비밀번호 불일치");
+        }
         if (userRepository.findByNickname(userSignUpDto.getNickname()).isPresent()) {
             throw new Exception("이미 존재하는 닉네임입니다.");
+        }
+
+        // ❶ 먼저 이메일 인증됐는지 확인
+        if (!mailService.isVerified(userSignUpDto.getEmail())) {
+            throw new IllegalStateException("이메일 인증을 완료해 주세요.");
         }
 
         User user = User.builder()
                 .email(userSignUpDto.getEmail())
                 .password(userSignUpDto.getPassword())
                 .nickname(userSignUpDto.getNickname())
+                .age(userSignUpDto.getAge())
+                .sex(userSignUpDto.getSex())
+                .Genres(userSignUpDto.getGenres())
                 .role(Role.USER)
                 .build();
 
