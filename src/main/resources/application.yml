@@ -4,9 +4,9 @@ spring:
       - application-jwt.yml
       - application-oauth.yml
   datasource:
-    url: jdbc:postgresql://localhost:5432/soundbridge
-    username: postgres
-    password: postgres
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update

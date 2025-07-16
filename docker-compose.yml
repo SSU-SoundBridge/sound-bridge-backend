@@ -17,21 +17,24 @@ services:
       - soundbridge
   app:
     build:
-     context: .
-     dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile
     container_name: soundbridge-app
     ports:
-     - "8080:8080"
-    environment:
-     SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/soundbridge
-     SPRING_DATASOURCE_USERNAME: postgres
-     SPRING_DATASOURCE_PASSWORD: postgres
+      - "8080:8080"
     depends_on:
-     - db
+      - db
     networks:
-     - soundbridge
+      - soundbridge
     env_file:
-     - .env
+      - .env
+    environment:
+      DB_URL: ${DB_URL}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      KAKAO_CLIENT_ID: ${KAKAO_CLIENT_ID}
     #entrypoint: ["sh", "docker/app/entrypoint.sh"]
 volumes:
   db_data:
