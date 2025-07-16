@@ -35,7 +35,7 @@ services:
       EMAIL_PASSWORD: ${EMAIL_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
       KAKAO_CLIENT_ID: ${KAKAO_CLIENT_ID}
-    #entrypoint: ["sh", "docker/app/entrypoint.sh"]
+#    entrypoint: ["sh", "docker/app/entrypoint.sh"]
 volumes:
   db_data:
 
