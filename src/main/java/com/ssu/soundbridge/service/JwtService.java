@@ -2,6 +2,7 @@ package com.ssu.soundbridge.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.ssu.soundbridge.domain.User;
 import com.ssu.soundbridge.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -169,4 +170,28 @@ public class JwtService {
             return false;
         }
     }
+
+    public Optional<User> getUserFromAccessToken(HttpServletRequest request) {
+        // 1. 토큰 추출
+        Optional<String> accessTokenOpt = extractAccessToken(request);
+        // 2. 토큰 유효성 검사
+        if (accessTokenOpt.isEmpty()) {
+            return Optional.empty();
+        }
+        String accessToken = accessTokenOpt.get();
+        if (!isTokenValid(accessToken)) {
+            return Optional.empty();
+        }
+        // 3. 이메일 추출
+        Optional<String> emailOpt = extractEmail(accessToken);
+        if (emailOpt.isEmpty()) {
+            return Optional.empty();
+        }
+        String email = emailOpt.get();
+        // 4. 사용자 조회
+        return userRepository.findByEmail(email);
+    }
+
+
+
 }
