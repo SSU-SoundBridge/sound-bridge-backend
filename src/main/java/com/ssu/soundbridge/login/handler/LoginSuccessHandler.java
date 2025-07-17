@@ -1,5 +1,6 @@
 package com.ssu.soundbridge.login.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssu.soundbridge.repository.UserRepository;
 import com.ssu.soundbridge.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,6 +35,16 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                 .ifPresent(user -> {
                     user.updateRefreshToken(refreshToken);
                     userRepository.saveAndFlush(user);
+                    try {
+                        // 유저 정보를 JSON으로 응답에 추가
+                        response.setContentType("application/json;charset=UTF-8");
+                        response.setCharacterEncoding("UTF-8");
+
+                        String userJson = new ObjectMapper().writeValueAsString(user); // 유저 객체 JSON 변환
+                        response.getWriter().write(userJson); // 본문에 유저 정보 포함
+                    } catch (Exception e) {
+                        log.error("유저 정보 응답 중 에러 발생", e);
+                    }
                 });
         log.info("로그인에 성공하였습니다. 이메일 : {}", email);
         log.info("로그인에 성공하였습니다. AccessToken : {}", accessToken);
